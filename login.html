@@ -1,0 +1,43 @@
+<!doctype html>
+<html id='doc'>
+<head>
+
+</head>
+<body id='main_body'>
+  <h1> Please choose a name! </h1>
+  <form>
+    <input type='text' id='name'/>
+    <button type='submit'>Send</Button>
+  </form>
+  <h1 id='feedback'> </h1>
+  <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+$(function () {
+  var socket = io();
+  $('form').submit(function(){
+    if($('#name').val().includes(' ')){
+      $('#feedback').text('Registration failed: Name must not contain blank spaces!');
+    }else if($('#name').val().length==0){
+      $('#feedback').text('Registration failed: Name must not be empty!');
+    }
+    else{
+    socket.emit('registration', $('#name').val());
+  }
+    return false;
+  });
+
+  socket.on('registration success', function(msg){
+    sessionStorage.setItem('username', $('#name').val());
+    $('#main_body').html(msg);
+
+  });
+
+  socket.on('registration fail', function(msg){
+    $('#name').val('');
+    $('#feedback').text(msg);
+  });
+});
+</script>
+</body>
+</html>

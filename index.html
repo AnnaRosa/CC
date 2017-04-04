@@ -15,25 +15,58 @@
     </style>
   </head>
   <body>
+    <div id="container">
     <ul id="messages"></ul>
     <form action="">
       <input id="m" autocomplete="off" /><button>Send</button>
     </form>
-    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+  </div>
+ <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
-      $(function () {
-        var socket = io();
-        $('form').submit(function(){
-          socket.emit('chat message', $('#m').val());
-          $('#m').val('');
-          return false;
-        });
-        socket.on('chat message', function(msg){
-          $('#messages').append($('<li>').text(msg));
-          window.scrollTo(0, document.body.scrollHeight);
-        });
-      });
-    </script>
+  $(function () {
+    var socket = io();
+    socket.on('success', function(msg){
+      $('#container').html(msg);
+    });
+    $('form').submit(function(){
+      if(($('#m').val()).includes('\\list')){
+        socket.emit('user list', '');
+      }
+      if(($('#m').val()).includes('@')){
+        var mess= {'message': $('#m').val() , 'mode' : {'m': 'private', 'name': 'Tim'}, 'name' : sessionStorage.getItem('username') };
+        socket.emit('chat message', JSON.stringify(mess));
+      }
+      else{
+        var mess={'message': $('#m').val() , 'mode':{'m' : 'public'},'name' : sessionStorage.getItem('username') };
+        socket.emit('chat message', JSON.stringify(mess));
+      }
+      $('#m').val('');
+      return false;
+    });
+    socket.on('chat message', function(msg){
+      var msgObj= JSON.parse(msg);
+      var fullmsg= '';
+      if(msgObj.mode.m==='private'){
+        if(msgObj.mode.name!==sessionStorage.getItem('username')){
+          fullmsg += '[private to '+ msgObj.mode.name+'] ';
+        }else{
+          fullmsg += '[private] ';
+        }
+
+      }
+      fullmsg = fullmsg + msgObj.name + ' ' + msgObj.date + ': ' + msgObj.message;
+      $('#messages').append($('<li>').text(fullmsg));
+    });
+
+    socket.on('user update', function(msg){
+      $('#messages').append($('<li>').text(msg));
+    });
+
+    socket.on('user list', function(msg){
+        $('#messages').append($('<li>').text(msg));
+    })
+  });
+</script>
   </body>
 </html>
