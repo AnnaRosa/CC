@@ -15,6 +15,9 @@
 <script>
 $(function () {
   var socket = io();
+
+  /*Checks if name is valid (at least one character and no blank spaces) to send, if so sends it to the server to check if another
+   user with the name exists*/
   $('form').submit(function(){
     if($('#name').val().includes(' ')){
       $('#feedback').text('Registration failed: Name must not contain blank spaces!');
@@ -27,12 +30,13 @@ $(function () {
     return false;
   });
 
+//Refreshes the content of the html-document according to what the server sent ( -> msg ) when logging in was successful
   socket.on('registration success', function(msg){
     sessionStorage.setItem('username', $('#name').val());
     $('#main_body').html(msg);
 
   });
-
+// If registration failed on the server-side (-> Name already in use), informs the user and emptys name-field
   socket.on('registration fail', function(msg){
     $('#name').val('');
     $('#feedback').text(msg);

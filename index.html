@@ -26,17 +26,21 @@
     <script>
   $(function () {
     var socket = io();
+    //Refreshes the content of the html-document according to what the server sent ( -> msg ) when logging in was successful
     socket.on('success', function(msg){
       $('#container').html(msg);
     });
     $('form').submit(function(){
+      //Sends request for userlist
       if(($('#m').val()).includes('\\list')){
         socket.emit('user list', '');
       }
+      //sends private message ( not fully implemented, always private to tim :D )
       if(($('#m').val()).includes('@')){
         var mess= {'message': $('#m').val() , 'mode' : {'m': 'private', 'name': 'Tim'}, 'name' : sessionStorage.getItem('username') };
         socket.emit('chat message', JSON.stringify(mess));
       }
+      //sends public message -> to everyone
       else{
         var mess={'message': $('#m').val() , 'mode':{'m' : 'public'},'name' : sessionStorage.getItem('username') };
         socket.emit('chat message', JSON.stringify(mess));
@@ -44,6 +48,8 @@
       $('#m').val('');
       return false;
     });
+
+    //receives message from server with message, if message is private appends [private], else shows message in Message-list
     socket.on('chat message', function(msg){
       var msgObj= JSON.parse(msg);
       var fullmsg= '';
@@ -59,10 +65,12 @@
       $('#messages').append($('<li>').text(fullmsg));
     });
 
+    // receives user update ( user came online / user left chat) from server and shows in Message-lsit
     socket.on('user update', function(msg){
       $('#messages').append($('<li>').text(msg));
     });
 
+    //receives user list from server and shows ist in message-list
     socket.on('user list', function(msg){
         $('#messages').append($('<li>').text(msg));
     })
