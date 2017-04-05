@@ -8,7 +8,7 @@
       form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
       form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
       form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages { list-style-type: none; margin: 0; padding: 0; word-wrap: break-word;}
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
       #messages { margin-bottom: 40px }
@@ -31,10 +31,11 @@
       $('#container').html(msg);
     });
     $('form').submit(function(){
+      if(($('#m').val()).length>0){
       //Sends request for userlist
       if(($('#m').val()).includes('\\list')){
         socket.emit('user list', '');
-      }
+      }else{
       //sends private message ( not fully implemented, always private to tim :D )
       if(($('#m').val()).includes('@')){
         var mess= {'message': $('#m').val() , 'mode' : {'m': 'private', 'name': 'Tim'}, 'name' : sessionStorage.getItem('username') };
@@ -45,6 +46,8 @@
         var mess={'message': $('#m').val() , 'mode':{'m' : 'public'},'name' : sessionStorage.getItem('username') };
         socket.emit('chat message', JSON.stringify(mess));
       }
+    }
+  }
       $('#m').val('');
       return false;
     });

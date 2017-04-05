@@ -58,10 +58,8 @@ io.on('connection', function(socket){
     var year= date.getFullYear();
     messageObject['date']= '[' + hours + ':'+ minutes + '  ' + day + '.'+ month + '.'+ year+ ']';
     if(messageObject.mode.m==='private'){
-      console.log('it wörked a bit');
       for(var i = 0; i < users.length;i++){
         if(users[i].name===messageObject.mode.name){
-          console.log('id wörgged');
           socket.broadcast.to(users[i].id).emit('chat message', JSON.stringify(messageObject));
           socket.emit('chat message', JSON.stringify(messageObject));
         }
