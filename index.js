@@ -71,9 +71,9 @@ io.on('connection', function(socket){
   });
 
   socket.on('user list', function(msg){
-    var userlist = "Users online:  <br/> ";
+    var userlist = "Users online:   " + "<br>";
     for(var i=0; i<users.length; i++){
-      userlist = userlist + users[i].name + " <br/> ";
+      userlist = userlist + "<a id=listlink href=users[i].name>" +users[i].name + "</a>" + "<br>";
     }
     socket.emit('user list', userlist);
   });
