@@ -11,9 +11,7 @@ app.get('/', function(req, res){
 var users = [];
 io.on('connection', function(socket){
 
-	var user = user + 1;
-	console.log(socket.id);
-	console.log('User came online: ' + user + 'users online');
+	console.log('new User came online');
 
 
 
@@ -33,7 +31,6 @@ io.on('connection', function(socket){
       else{
         socket.emit('registration fail', 'Registration failed: Name already in use! Please try again using another name!');
       }
-			//console.log(index);
 	});
 
   socket.on('chat message', function(msg){
@@ -58,18 +55,23 @@ io.on('connection', function(socket){
     var year= date.getFullYear();
     messageObject['date']= '[' + hours + ':'+ minutes + '  ' + day + '.'+ month + '.'+ year+ ']';
     if(messageObject.mode.m==='private'){
+      var found = false;
       for(var i = 0; i < users.length;i++){
         if(users[i].name===messageObject.mode.name){
+          found=true;
           socket.broadcast.to(users[i].id).emit('chat message', JSON.stringify(messageObject));
           socket.emit('chat message', JSON.stringify(messageObject));
+        }
+        else{
+          if(i==(users.length-1) && found==false){
+            socket.emit('chat message failure', ('Chosen user '+messageObject.mode.name+' is not online or name is spelled wrong. Please try again.'));
+}
         }
       }
     }else{
       io.emit('chat message',JSON.stringify(messageObject));
     }
-
   });
-
   socket.on('user list', function(msg){
     var userlist = "Users online:   " + "<br>";
     for(var i=0; i<users.length; i++){
@@ -87,8 +89,6 @@ io.on('connection', function(socket){
         io.emit('user update', 'User '+ name + ' left the chat.');
       }
     }
-
-    console.log('user '+ socket.id +' disconnected');
   });
 
 });

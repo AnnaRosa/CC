@@ -39,6 +39,8 @@ $(function () {
   socket.on('registration success', function(msg){
     sessionStorage.setItem('username', $('#name').val());
     $('#main_body').html(msg);
+    $('#messages').append($('<li>').html("<div id=list>Welcome! <br/>You successfully joined the chat. <br/> For sending private messages to a user, type '\\@',username and your private message. If you want to know who's online, simply type \\list. <br/> Have fun!<div>"));
+
 
   });
 // If registration failed on the server-side (-> Name already in use), informs the user and emptys name-field

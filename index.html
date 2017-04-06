@@ -14,7 +14,7 @@
       #messages { margin-bottom: 40px }
 	  #name{color: green; font-size: 17px; text-decoration: none; font-weight: bold; float: left}
 	  #rest{font-size: 15px; margin-left: 5px}
-	  #list{font-size: 15px}
+	  #list{font-size: 18px; font-style: oblique; }
 	  #listlink{font-size: 17px; text-decoration: none; color: green}
     </style>
   </head>
@@ -30,59 +30,82 @@
     <script>
   $(function () {
     var socket = io();
-    //Refreshes the content of the html-document according to what the server sent ( -> msg ) when logging in was successful
-    socket.on('success', function(msg){
-      $('#container').html(msg);
-    });
+
     $('form').submit(function(){
-      if(($('#m').val()).length>0){
+      var textfield= $('#m').val();
+      if((textfield).length>0){
       //Sends request for userlist
-      if(($('#m').val()).includes('\\list')){
+      if((textfield).includes('\\list')){
         socket.emit('user list', '');
       }else{
       //sends private message ( not fully implemented, always private to tim :D )
-      if(($('#m').val()).includes('@')){
-        var mess= {'message': $('#m').val() , 'mode' : {'m': 'private', 'name': 'Tim'}, 'name' : sessionStorage.getItem('username') };
-        socket.emit('chat message', JSON.stringify(mess));
+      if((textfield).includes('\\@')){
+        var pattern= /\\@.*?\s/g;
+        var regEx= new RegExp(pattern);
+        if(regEx.test(textfield)){
+        var receivers= (textfield).match(pattern);
+
+          var receiver= (receivers[0].replace('\\@',''));
+          var r= receiver.slice(0,-1);
+
+          var message= textfield.replace(receivers[0],'');
+          var mess= {'message': message , 'mode' : {'m': 'private', 'name': r}, 'name' : sessionStorage.getItem('username') };
+          socket.emit('chat message', JSON.stringify(mess));
+          $('#m').val('');
+        }else{
+          $('#messages').append($('<li>').html("<div id=list>"+'You forgot to type a message, try again!'+"<div>"));
+        }
       }
+
       //sends public message -> to everyone
       else{
         var mess={'message': $('#m').val() , 'mode':{'m' : 'public'},'name' : sessionStorage.getItem('username') };
         socket.emit('chat message', JSON.stringify(mess));
+        $('#m').val('');
       }
     }
   }
-      $('#m').val('');
+
       return false;
     });
 
     //receives message from server with message, if message is private appends [private], else shows message in Message-list
+    //works
     socket.on('chat message', function(msg){
+
       var msgObj= JSON.parse(msg);
-      var fullmsg= '';
+      var fullmsg= msgObj.date + ': ' + msgObj.message;
       if(msgObj.mode.m==='private'){
         if(msgObj.mode.name!==sessionStorage.getItem('username')){
-          fullmsg += '[private to '+ msgObj.mode.name+'] ';
+          $('#messages').append($('<li>').html("<div id = name>" + "<a id = name href=msgObj.name>" + msgObj.name + "</a>" + "</div>" +  "<div id=rest>" +' [private to '+ msgObj.mode.name +'] '+ msgObj.date + ': ' + msgObj.message +"</div>"));
         }else{
-          fullmsg += '[private] ';
+          $('#messages').append($('<li>').html("<div id = name>" + "<a id = name href=msgObj.name>" + msgObj.name + "</a>" + "</div>" + "<div id=rest>" +'[private] '  + msgObj.date + ': ' + msgObj.message +"</div>"));
+
+
         }
 
+      }else{
+        $('#messages').append($('<li>').html("<div id = name>" + "<a id = name href=msgObj.name>" + msgObj.name + "</a>" + "</div>"  + "<div id=rest>" + fullmsg +"</div>"));
+
       }
-      fullmsg = msgObj.name + ' ' + msgObj.date + ': ' + msgObj.message;
-	  $('#messages').append($('<li>').html("<div id = name>" + "<a id = name href=msgObj.name>" + msgObj.name + "</a>" + "</div>" + ' ' + "<div id=rest>" + msgObj.date + ': ' + msgObj.message + "</div>"));
-	  
+
+
 
     });
 
     // receives user update ( user came online / user left chat) from server and shows in Message-lsit
     socket.on('user update', function(msg){
-      $('#messages').append($('<li>').text(msg));
+      $('#messages').append($('<li>').html("<div id=list>"+msg+"<div>"));
+    });
+
+    socket.on('chat message failure', function(msg){
+      $('#messages').append($('<li>').html("<div id=list>"+msg+"<div>"));
     });
 
     //receives user list from server and shows ist in message-list
     socket.on('user list', function(msg){
         $('#messages').append($('<li>').html("<div id=list>"+msg+"<div>"));
-    })
+    });
   });
 </script>
   </body>
