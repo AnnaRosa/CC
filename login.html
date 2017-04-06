@@ -46,7 +46,7 @@ $(function () {
     sessionStorage.setItem('username', $('#name').val());
     $('#main_body').html(msg);
     //adds welcome-message to the new document
-    $('#messages').append($('<li>').html("<div id=list>Welcome! <br/>You successfully joined the chat. <br/> For sending private messages to a user, type '\\@',username and your private message. For a shortcut you can also simply clickt the name of the receiver in the chat or the user list. If you want to know who's online, simply type \\list. <br/> Have fun!<div>"));
+   $('#messages').append($('<li>').html("<div id=list>Welcome! <br/>You successfully joined the chat. <br/> For sending private messages to a user, type "+'\\@'+"username and your private message. For a shortcut you can also simply clickt the name of the receiver in the chat or the user list. If you want to know who's online, simply type \\list. <br/> Have fun!<div>"));
 
 
   });

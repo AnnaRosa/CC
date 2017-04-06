@@ -84,7 +84,7 @@
             var mess= {'message': message , 'mode' : {'m': 'private', 'name': r}, 'name' : sessionStorage.getItem('username') };
             socket.emit('chat message', JSON.stringify(mess));
             $('#m').val('');
-          }else if(!textfield.test(/\\@.*?\s.*/g)){
+          }else if(!(/\\@.*?\s/g).test(textfield)){
             //if there is only the call for the private message, it doesn't send the message, but asks for more.
             $('#messages').append($('<li>').html("<div id=list>"+'You forgot to type a message, try again!'+"<div>"));
           }

@@ -45,8 +45,8 @@ io.on('connection', function(socket){
 
   // When Socket sends new Chat-Message
   socket.on('chat message', function(msg){
-    var messageObject= JSON.parse(msg
-	
+    var messageObject= JSON.parse(msg);
+
 	//Create Timestamp
     var date=  new Date();
     var hours= date.getHours();
@@ -96,7 +96,7 @@ io.on('connection', function(socket){
   socket.on('user list', function(msg){
     var userlist = "Users online:   " + "<br>";
     for(var i=0; i<users.length; i++){
-      userlist = userlist + "<a id=listlink href=users[i].name>" +users[i].name + "</a>" + "<br>";
+      userlist = userlist + "<a id=listlink  onclick=typehelper('"+users[i].name+"') href='#'>" +users[i].name + "</a>" + "<br>";
     }
     //sends response only to requesting sender
     socket.emit('user list', userlist);
