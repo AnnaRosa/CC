@@ -4,7 +4,7 @@ var io = require('socket.io')(http);
 var port = process.env.PORT || 3000;
 var fs= require('fs');
 
-//Authors Felix Rosa, Anna Rosa
+//Authors Felix (741591), Anna Rosa(742506)
 //Node.js-Server working with Socket.io to create a real-time-communication-chat
 
 /*content of the index.html loaded on start of the server so that asynchronous
@@ -45,7 +45,9 @@ io.on('connection', function(socket){
 
   // When Socket sends new Chat-Message
   socket.on('chat message', function(msg){
-    var messageObject= JSON.parse(msg);
+    var messageObject= JSON.parse(msg
+	
+	//Create Timestamp
     var date=  new Date();
     var hours= date.getHours();
     if(hours <10){

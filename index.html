@@ -31,7 +31,12 @@
  <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
-    // Authors: Felix Rosa, Anna Rosa
+    // Authors: Felix Rosa(741591), Anna Rosa (742506)
+
+    //called on click of a name, adds \@name to the beginning of the textfield
+    function typehelper(name){
+      document.getElementById('m').value= '\\@'+ name+ ' '+document.getElementById('m').value;
+      }
   $(function () {
     //loads socket.io-client and connects to socket.io-server
     var socket = io();
@@ -51,6 +56,7 @@
       //Sends request for userlist if input-field contained '\list'.
       if((textfield).includes('\\list')){
         socket.emit('user list', '');
+        $('#m').val('');
       }else{
 
         /*If textfield contains '\@', it checks if the pattern was properly matched,
@@ -110,14 +116,14 @@
         1.If this user is not the receipient of the message, he is treated as the sender -> a "private sent to [receiver]" is added
           before adding it to the list of messages as user otherwise only sees that he is the sender but not to whom the message was sent*/
         if(msgObj.mode.name!==sessionStorage.getItem('username')){
-          $('#messages').append($('<li>').html("<div id = name>" + "<a id = name href=msgObj.name>" + msgObj.name + "</a>" + "</div>" +  "<div id=rest>" +' [private to '+ msgObj.mode.name +'] '+ msgObj.date + ': ' + msgObj.message +"</div>"));
+          $('#messages').append($('<li>').html("<div id = name>" + "<a id = name onclick=typehelper('"+msgObj.name+"') href='#'>" + msgObj.name + "</a>" + "</div>" +  "<div id=rest>" +' [private to '+ msgObj.mode.name +'] '+ msgObj.date + ': ' + msgObj.message +"</div>"));
         }else{
           //2.If this user is the receipient of the message,only a "private" is added, as he sees who the sender is
-          $('#messages').append($('<li>').html("<div id = name>" + "<a id = name href=msgObj.name>" + msgObj.name + "</a>" + "</div>" + "<div id=rest>" +'[private] '  + msgObj.date + ': ' + msgObj.message +"</div>"));
+          $('#messages').append($('<li>').html("<div id = name>" + "<a id = name onclick=typehelper('"+msgObj.name+"') href='#'>" + msgObj.name + "</a>" + "</div>" + "<div id=rest>" +'[private] '  + msgObj.date + ': ' + msgObj.message +"</div>"));
         }
       }else{
         //If the message is not public, it simply adds it ot the list of messages
-        $('#messages').append($('<li>').html("<div id = name>" + "<a id = name href=msgObj.name>" + msgObj.name + "</a>" + "</div>"  + "<div id=rest>" + fullmsg +"</div>"));
+        $('#messages').append($('<li>').html("<div id = name>" + "<a id = name onclick=typehelper('"+msgObj.name+"') href='#'>" + msgObj.name + "</a>" + "</div>"  + "<div id=rest>" + fullmsg +"</div>"));
       }
     });
 

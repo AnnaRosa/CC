@@ -20,7 +20,7 @@ h1{font: Helvetica; font-size: 45px; text-align: center; margin-top: 200px}
   <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
 
-/*Authors Felix Rosa, Anna Rosa
+/*Authors Felix Rosa(741591), Anna Rosa(742506)
   HTML to handle login -> User-Name-Input and registration on the server*/
 $(function () {
     //loads socket.io-client and connects to socket.io-server
@@ -46,7 +46,7 @@ $(function () {
     sessionStorage.setItem('username', $('#name').val());
     $('#main_body').html(msg);
     //adds welcome-message to the new document
-    $('#messages').append($('<li>').html("<div id=list>Welcome! <br/>You successfully joined the chat. <br/> For sending private messages to a user, type '\\@',username and your private message. If you want to know who's online, simply type \\list. <br/> Have fun!<div>"));
+    $('#messages').append($('<li>').html("<div id=list>Welcome! <br/>You successfully joined the chat. <br/> For sending private messages to a user, type '\\@',username and your private message. For a shortcut you can also simply clickt the name of the receiver in the chat or the user list. If you want to know who's online, simply type \\list. <br/> Have fun!<div>"));
 
 
   });
